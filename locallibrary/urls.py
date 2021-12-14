@@ -24,8 +24,8 @@ urlpatterns = [
     path('catalog/', include('catalog.urls')),
 ]
 
-# urlpatterns += [
-#     path('', RedirectView.as_view(url='/catalog/', permanent=True)),    # Перенаправляем запросы с корневого URL, на URL приложения
-# ]
+urlpatterns += [
+    path('', RedirectView.as_view(url='/catalog/', permanent=True)),    # Перенаправляем запросы с корневого URL, на URL приложения
+]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
