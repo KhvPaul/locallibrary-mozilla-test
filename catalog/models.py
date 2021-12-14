@@ -16,14 +16,14 @@ class Genre(models.Model):
         return self.name
 
 
-class Language(models.Model):
-    """Model representing a Language (e.g. English, French, Japanese, etc.)"""
-    name = models.CharField(max_length=200,
-                            help_text="Enter the book's natural language (e.g. English, French, Japanese etc.)")
-
-    def __str__(self):
-        """String for representing the Model object (in Admin site etc.)"""
-        return self.name
+# class Language(models.Model):
+#     """Model representing a Language (e.g. English, French, Japanese, etc.)"""
+#     name = models.CharField(max_length=200,
+#                             help_text="Enter the book's natural language (e.g. English, French, Japanese etc.)")
+#
+#     def __str__(self):
+#         """String for representing the Model object (in Admin site etc.)"""
+#         return self.name
 
 
 class Book(models.Model):
@@ -41,7 +41,7 @@ class Book(models.Model):
 
     # ManyToManyField used because genre can contain many books. Books can cover many genres.
     # Genre class has already been defined so we can specify the object above.
-    language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
+    # language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         """
@@ -54,6 +54,14 @@ class Book(models.Model):
         Returns the url to access a particular book instance.
         """
         return reverse('book-detail', args=[str(self.id)])
+
+    def display_genre(self):
+        """
+        Creates a string for the Genre. This is required to display genre in Admin.
+        """
+        return ', '.join([genre.name for genre in self.genre.all()[:3]])
+
+    display_genre.short_description = 'Genre'
 
 
 class BookInstance(models.Model):
@@ -83,6 +91,30 @@ class BookInstance(models.Model):
         String for representing the Model object
         """
         return '{0} ({1})'.format(self.id, self.book.title)
+
+    def display_book(self):
+        return self.book.title
+
+    display_book.short_description = 'Title'
+
+    def display_status(self):
+        for el in self.LOAN_STATUS:
+            if el[0] == self.status:
+                return el[1]
+
+    display_status.short_description = 'Status'
+
+    def display_due_back(self):
+        return self.due_back
+
+    display_due_back.short_description = 'Return date'
+
+    def display_id(self):
+        return self.id
+
+    display_id.short_description = 'Id'
+
+
 
 
 class Author(models.Model):
