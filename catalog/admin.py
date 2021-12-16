@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Author, Genre, Book, BookInstance, Language
+
+from .models import Author, Book, BookInstance, Genre, Language
 
 
 # Register the Admin classes for Author using the decorator
