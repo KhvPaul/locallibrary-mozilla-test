@@ -1,8 +1,7 @@
 from django.contrib import admin
-from .models import Author, Genre, Book, BookInstance  # , Language
+from .models import Author, Genre, Book, BookInstance, Language
 
 
-# admin.site.register(Author)
 # Register the Admin classes for Author using the decorator
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
@@ -18,14 +17,14 @@ class BooksInstanceInline(admin.TabularInline):
 # Register the Admin classes for Book using the decorator
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'display_genre')
+    list_display = ('title', 'author', 'display_genre', 'language')
     inlines = [BooksInstanceInline]
 
 
 # Register the Admin classes for BookInstance using the decorator
 @admin.register(BookInstance)
 class BookInstanceAdmin(admin.ModelAdmin):
-    list_display = ('display_book', 'display_status', 'display_due_back', 'display_id')
+    list_display = ('book', 'status', 'due_back', 'id')
     list_filter = ('status', 'due_back')
     fieldsets = (
         (None, {
@@ -37,11 +36,5 @@ class BookInstanceAdmin(admin.ModelAdmin):
     )
 
 
-
-
-
-
-
-
 admin.site.register(Genre)
-# admin.site.register(Language)
+admin.site.register(Language)

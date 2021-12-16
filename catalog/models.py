@@ -16,14 +16,14 @@ class Genre(models.Model):
         return self.name
 
 
-# class Language(models.Model):
-#     """Model representing a Language (e.g. English, French, Japanese, etc.)"""
-#     name = models.CharField(max_length=200,
-#                             help_text="Enter the book's natural language (e.g. English, French, Japanese etc.)")
-#
-#     def __str__(self):
-#         """String for representing the Model object (in Admin site etc.)"""
-#         return self.name
+class Language(models.Model):
+    """Model representing a Language (e.g. English, French, Japanese, etc.)"""
+    name = models.CharField(max_length=200,
+                            help_text="Enter the book's natural language (e.g. English, French, Japanese etc.)")
+
+    def __str__(self):
+        """String for representing the Model object (in Admin site etc.)"""
+        return self.name
 
 
 class Book(models.Model):
@@ -36,12 +36,12 @@ class Book(models.Model):
     # Author as a string rather than object because it hasn't been declared yet in the file.
     summary = models.TextField(max_length=1000, help_text="Enter a brief description of the book")
     isbn = models.CharField('ISBN', max_length=13,
-                            help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>')
+                            help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>')  # noqa: E501
     genre = models.ManyToManyField(Genre, help_text="Select a genre for this book")
+    language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
 
     # ManyToManyField used because genre can contain many books. Books can cover many genres.
     # Genre class has already been defined so we can specify the object above.
-    # language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         """
@@ -92,30 +92,6 @@ class BookInstance(models.Model):
         """
         return '{0} ({1})'.format(self.id, self.book.title)
 
-    def display_book(self):
-        return self.book.title
-
-    display_book.short_description = 'Title'
-
-    def display_status(self):
-        for el in self.LOAN_STATUS:
-            if el[0] == self.status:
-                return el[1]
-
-    display_status.short_description = 'Status'
-
-    def display_due_back(self):
-        return self.due_back
-
-    display_due_back.short_description = 'Return date'
-
-    def display_id(self):
-        return self.id
-
-    display_id.short_description = 'Id'
-
-
-
 
 class Author(models.Model):
     """
@@ -137,3 +113,6 @@ class Author(models.Model):
         String for representing the Model object.
         """
         return '{0}, {1}'.format(self.last_name, self.first_name)
+
+    class Meta:
+        ordering = ['last_name']
