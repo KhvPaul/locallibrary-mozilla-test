@@ -1,25 +1,58 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Author List</h1>
+    <div style="display: flex; flex-direction: row; align-items: center">
+
+        <h1>Author List</h1>
+
+        {% if user.is_staff %}
+
+            {% if perms.catalog.add_author %}
+
+                <a style="height: 1.5em; margin-left: 0.5em; margin-top: 0.5em; background: rgb(121,255,73); color: black; border-radius: 10%" href="{%  url 'author-create' %}"> Create Author</a>
+
+            {% endif %}
+        {% endif %}
+
+    </div>
 
     {% if author_list %}
-    <ul>
+        <ul>
+            {% for author in author_list %}
+                <li>
+                    <a href="{{ author.get_absolute_url }}">{{ author.first_name }} {{ author.last_name }} ({{author.date_of_birth}} -
 
-      {% for author in author_list %}
-      <li>
-        <a href="{{ author.get_absolute_url }}">{{ author.first_name }} {{ author.last_name }} ({{author.date_of_birth}} -
-          {% if author.date_of_death %}
-              {{author.date_of_death}})
-          {% else %}
-               )
-          {% endif %}
-        </a>
-      </li>
-      {% endfor %}
+                        {% if author.date_of_death %}
 
-    </ul>
+                            {{author.date_of_death}})
+
+                        {% else %}
+
+                            )
+
+                        {% endif %}
+
+                    </a>
+
+
+                    {% if user.is_staff %}
+
+                        {% if perms.catalog.change_author %}
+                            <a style="background: rgb(38,188,245); color: black; border-radius: 10%" href="{%  url 'author-update' author.pk %}"> Update Author</a>
+
+                        {% endif %}
+                        {% if perms.catalog.delete_author %}
+                            <a style="background: rgb(238,66,66); color: black; border-radius: 10%" href="{%  url 'author-delete' author.pk %}"> Delete Author</a>
+
+                        {% endif %}
+                    {% endif %}
+
+
+                </li>
+
+            {% endfor %}
+        </ul>
     {% else %}
-      <p>There are no authors in list.</p>
-    {% endif %} 
+        <p>There are no authors in list.</p>
+    {% endif %}
 {% endblock %}
