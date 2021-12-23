@@ -1,6 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.views import generic
 
+
+# from locallibrary.settings import BASE_DIR
 from .models import Author, Book, BookInstance
 
 
@@ -16,7 +19,8 @@ def index(request):
     # Number of visits to this view, as counted in the session variable.
     num_visits = request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits + 1
-
+    # print(request.session.items())
+    # print(BASE_DIR)
     # Render the HTML template index.html with the data in the context variable.
     return render(
         request,
@@ -81,3 +85,26 @@ def author_detail_view(request, pk):
         'catalog/author_detail.html',
         context={'author': author_id, }
     )
+
+
+class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
+    """
+    Generic class-based view listing books on loan to current user.
+    """
+    model = BookInstance
+    template_name = 'catalog/bookinstance_list_borrowed_user.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
+
+
+class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
+    """Generic class-based view listing all books on loan. Only visible to users with can_mark_returned permission."""
+    model = BookInstance
+    permission_required = 'catalog.can_mark_returned'
+    template_name = 'catalog/all_borrowed_books.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return BookInstance.objects.filter(status__exact='o').order_by('due_back')

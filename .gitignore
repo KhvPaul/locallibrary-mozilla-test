@@ -130,5 +130,5 @@ dmypy.json
 
 
 .idea/
-db.sqlite3
 .DS_Store
+fixtures.json
